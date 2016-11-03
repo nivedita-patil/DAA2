@@ -1,5 +1,6 @@
 #include<iostream>
 #include<queue>
+#include"DAA2.h"
 using namespace std;
 
 template<typename T> void print_queue(T& q) {
@@ -10,18 +11,13 @@ template<typename T> void print_queue(T& q) {
     std::cout << '\n';
 }
 
-void travel(int n, int inputMatrix[5][5], int optTour[6], int minLength);
 
-class Node
-{
-public: 	
-	int level;
-	queue<int>path;
-	int bound;
-	int boundMatrix[5][5];
-};
 
-int calBound(Node v);
+bool operator<(const Node& a, const Node& b) {
+  return a.bound > b.bound;
+}
+
+
 
 int main()
 {
@@ -43,7 +39,7 @@ int main()
 void travel(int n, int inputMatrix[5][5], int optTour[6], int minLength)
 {
 	Node u,v;
-	priority_queue<int>q;
+	priority_queue<Node>q;
 
 	v.level = 0;
 	v.path.push(1);
@@ -58,9 +54,8 @@ void travel(int n, int inputMatrix[5][5], int optTour[6], int minLength)
 		}
 	}
 
-	v.bound = calBound(v);
-	
-	cout<<"**"<<v.bound<<"\n";
+	v.bound = calBound(v);	
+	q.push(v);
 
 //cout<<v.path.front()<<"\n";	
 
