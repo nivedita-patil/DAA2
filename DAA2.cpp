@@ -1,12 +1,15 @@
 #include<iostream>
 #include<queue>
+#include<deque>
+#include<algorithm>
+#include<vector>
 #include"DAA2.h"
 using namespace std;
 
 template<typename T> void print_queue(T& q) {
     while(!q.empty()) {
-        std::cout << q.top() << " ";
-        q.pop();
+        std::cout << q.front() << " ";
+        q.pop_front();
     }
     std::cout << '\n';
 }
@@ -42,7 +45,7 @@ void travel(int n, int inputMatrix[5][5], int optTour[6], int minLength)
 	priority_queue<Node>q;
 
 	v.level = 0;
-	v.path.push(1);
+	v.path.push_front(1);
 	copy(&inputMatrix[0][0], &inputMatrix[0][0]+25, &v.boundMatrix[0][0]);	
 
 	for(int k=0; k<5; k++)
@@ -56,9 +59,10 @@ void travel(int n, int inputMatrix[5][5], int optTour[6], int minLength)
 
 	v.bound = calBound(v);	
 	q.push(v);
-
+	
 //cout<<v.path.front()<<"\n";	
 
+	cout<<"Iteration 1 Matrix: \n";
 		for(int i=0; i<5; i++)
 	{
 		for(int j=0; j<5; j++)
@@ -67,6 +71,45 @@ void travel(int n, int inputMatrix[5][5], int optTour[6], int minLength)
 		}
 		cout<<"\n";
 	}
+
+	minLength = 9999;
+
+	while (!q.empty())
+	{
+		//cout<<"here ";
+		deque<int>::iterator it;
+		v = q.top();
+		q.pop();
+		if (v.bound < minLength)
+		{
+			u.level = v.level + 1;
+			if (u.level == n)
+			{
+				u.path = v.path;
+				u.path.push_front(1);
+				print_queue(u.path);
+			}
+			else
+			{
+				for(int g=2; g<=n; g++)
+				{
+					it = find (v.path.begin(), v.path.end(), g);
+					if(it == v.path.end())
+					{
+						//not found
+						
+						u.path = v.path;
+						u.path.push_front(g);
+						//calc bound
+						q.push(u);							
+							
+						//cout<<"level"<<u.level<<"\n";
+					}
+				}
+			}
+		}
+	}
+
 }
 
 int calBound(Node v)
