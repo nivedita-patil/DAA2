@@ -45,7 +45,9 @@ void travel(int n, int inputMatrix[5][5], int optTour[6], int minLength)
 	priority_queue<Node>q;
 
 	v.level = 0;
+	v.path.push_front(-1);
 	v.path.push_front(1);
+	v.src[0]=1;
 	copy(&inputMatrix[0][0], &inputMatrix[0][0]+25, &v.boundMatrix[0][0]);	
 
 	for(int k=0; k<5; k++)
@@ -58,11 +60,12 @@ void travel(int n, int inputMatrix[5][5], int optTour[6], int minLength)
 	}
 
 	v.bound = calBound(v);	
+	minLength = 9999;	
 	q.push(v);
 	
 //cout<<v.path.front()<<"\n";	
 
-	cout<<"Iteration 1 Matrix: \n";
+/*	cout<<"Iteration 1 Matrix: \n";
 		for(int i=0; i<5; i++)
 	{
 		for(int j=0; j<5; j++)
@@ -71,8 +74,7 @@ void travel(int n, int inputMatrix[5][5], int optTour[6], int minLength)
 		}
 		cout<<"\n";
 	}
-
-	minLength = 9999;
+*/
 
 	while (!q.empty())
 	{
@@ -83,10 +85,12 @@ void travel(int n, int inputMatrix[5][5], int optTour[6], int minLength)
 		if (v.bound < minLength)
 		{
 			u.level = v.level + 1;
+			cout<<"U LEVEL: "<<u.level<<endl;
 			if (u.level == n)
 			{
 				u.path = v.path;
 				u.path.push_front(1);
+				cout<<"== FINAL ==\n";
 				print_queue(u.path);
 			}
 			else
@@ -99,10 +103,25 @@ void travel(int n, int inputMatrix[5][5], int optTour[6], int minLength)
 						//not found
 						
 						u.path = v.path;
+						copy(&v.src[0], &v.src[4], &u.src[0]);
+						//u.src = v.src;
+						copy(&v.dst[0], &v.dst[4],&u.dst[0]);
+						//u.dst = v.dst;
 						u.path.push_front(g);
+						u.dst[g-1] = 1;
+						u.src[v.path.front()-1] = 1;
+						//u.src[u.path[u.path.size()-1]] = 1;
+
 						//calc bound
-						q.push(u);							
-							
+						copy(&v.boundMatrix[0][0], &v.boundMatrix[0][0]+25, &u.boundMatrix[0][0]);
+						u.bound = calMatrix(u);						
+						cout<<"**"<<u.bound<<"**\n";
+						//if(u.bound < minLength)
+						//{
+							q.push(u);
+							cout<<"Path till now: ";
+							print_queue(u.path);
+						//}	
 						//cout<<"level"<<u.level<<"\n";
 					}
 				}
@@ -122,12 +141,42 @@ int calBound(Node v)
 		min = 9999;
 		for(int j=0; j<5; j++)
 		{
-			if(v.boundMatrix[i][j]>=0 && v.boundMatrix[i][j]<min)
+			if(v.boundMatrix[i][j]<min)
 			{
-				min = v.boundMatrix[i][j];
-			}
+				if(v.boundMatrix[i][j]>=0)
+					min = v.boundMatrix[i][j];
+			}			
+		}
+		if(min == 9999)
+		{
+			min = 0;
 		}
 		sum+=min;
 	}
 	return sum;
+}
+
+int calMatrix(Node u)
+{
+	int res;
+	cout<<"Iteration"<<u.level<<" Matrix: \n";
+	for(int i=0; i<5; i++)
+	{
+		for(int j=0; j<5; j++)
+		{
+				if (u.dst[j]==1 || u.src[i]==1)
+				{
+					u.boundMatrix[i][j]=-1;
+				}
+				if (j==0 && u.dst[i]==1)
+				{
+					u.boundMatrix[i][j]=-1;
+				}
+				cout<<u.boundMatrix[i][j]<<"\t";	
+		}
+		cout<<"\n";
+	}
+	res = calBound(u);
+	
+	return res;
 }
