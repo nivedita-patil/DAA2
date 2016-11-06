@@ -20,10 +20,6 @@ bool operator<(const Node& a, const Node& b) {
   return a.bound > b.bound;
 }
 
-
-
-int main()
-{
 	int inputMatrix[5][5] = {
 					{0, 14, 4, 10, 20},
 					{14, 0, 7, 8, 7},
@@ -31,6 +27,9 @@ int main()
 					{11, 7, 9, 0, 2},
 					{18, 7, 17, 4, 0}
 				};
+
+int main()
+{
 	int optTour[6];
 	int minLength = 99;
 	
@@ -114,6 +113,7 @@ void travel(int n, int inputMatrix[5][5], int optTour[6], int minLength)
 
 						//calc bound
 						copy(&v.boundMatrix[0][0], &v.boundMatrix[0][0]+25, &u.boundMatrix[0][0]);
+						//copy(&inputMatrix[0][0], &inputMatrix[0][0]+25, &u.boundMatrix[0][0]);
 						u.bound = calMatrix(u);						
 						cout<<"**"<<u.bound<<"**\n";
 						//if(u.bound < minLength)
@@ -149,7 +149,8 @@ int calBound(Node v)
 		}
 		if(min == 9999)
 		{
-			min = 0;
+			//cout<<"####"<<inputMatrix[v.path[v.path.size()-2]-1][v.path.front()-1]<<endl<<v.path.size()<<endl<<v.path.front()<<endl;
+			min = inputMatrix[v.path[v.path.size()-2]-1][v.path.front()-1];
 		}
 		sum+=min;
 	}
