@@ -102,9 +102,9 @@ void travel(int n, int inputMatrix[5][5], int optTour[6], int minLength)
 						//not found
 						
 						u.path = v.path;
-						copy(&v.src[0], &v.src[4], &u.src[0]);
+						copy(&v.src[0], &v.src[5], &u.src[0]);
 						//u.src = v.src;
-						copy(&v.dst[0], &v.dst[4],&u.dst[0]);
+						copy(&v.dst[0], &v.dst[5],&u.dst[0]);
 						//u.dst = v.dst;
 						u.path.push_front(g);
 						u.dst[g-1] = 1;
@@ -112,6 +112,7 @@ void travel(int n, int inputMatrix[5][5], int optTour[6], int minLength)
 						//u.src[u.path[u.path.size()-1]] = 1;
 
 						//calc bound
+
 						copy(&v.boundMatrix[0][0], &v.boundMatrix[0][0]+25, &u.boundMatrix[0][0]);
 						//copy(&inputMatrix[0][0], &inputMatrix[0][0]+25, &u.boundMatrix[0][0]);
 						u.bound = calMatrix(u);						
