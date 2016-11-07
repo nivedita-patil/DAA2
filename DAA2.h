@@ -17,3 +17,7 @@ public:
 int calBound(Node v);
 
 int calMatrix(Node u);
+
+int pathLength(Node u);
+
+int findMissing(Node u);

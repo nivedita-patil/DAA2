@@ -6,18 +6,19 @@
 #include"DAA2.h"
 using namespace std;
 
-template<typename T> void print_queue(T& q) {
-    while(!q.empty()) {
-        std::cout << q.front() << " ";
-        q.pop_front();
-    }
-    std::cout << '\n';
+template<typename T> void print_queue(T& q) 
+{
+	while(!q.empty()) 
+	{
+		std::cout << q.front() << " ";
+		q.pop_front();
+	}
+	std::cout << '\n';
 }
 
-
-
-bool operator<(const Node& a, const Node& b) {
-  return a.bound > b.bound;
+bool operator<(const Node& a, const Node& b)
+{
+	return a.bound > b.bound;
 }
 
 	int inputMatrix[5][5] = {
@@ -84,13 +85,24 @@ void travel(int n, int inputMatrix[5][5], int optTour[6], int minLength)
 		if (v.bound < minLength)
 		{
 			u.level = v.level + 1;
-			cout<<"U LEVEL: "<<u.level<<endl;
-			if (u.level == n)
+			//cout<<"U LEVEL: "<<u.level<<endl;
+			if (u.level == n-1)
 			{
 				u.path = v.path;
+				u.path.pop_back();
+				u.path.push_front(findMissing(u));
 				u.path.push_front(1);
-				cout<<"== FINAL ==\n";
-				print_queue(u.path);
+				if (pathLength(u)<minLength)
+				{
+					//cout<<"\n\n"<<"== FINAL ==\n"<<pathLength(u)<<endl;
+					//print_queue(u.path);
+					//cout<<"\n\n";
+					minLength = pathLength(u);
+					for(int w=0; w<u.path.size(); w++)
+					{
+						optTour[w]=u.path[w];
+					}
+				}
 			}
 			else
 			{
@@ -117,18 +129,23 @@ void travel(int n, int inputMatrix[5][5], int optTour[6], int minLength)
 						//copy(&inputMatrix[0][0], &inputMatrix[0][0]+25, &u.boundMatrix[0][0]);
 						u.bound = calMatrix(u);						
 						cout<<"**"<<u.bound<<"**\n";
-						//if(u.bound < minLength)
-						//{
+						if(u.bound < minLength)
+						{
 							q.push(u);
 							cout<<"Path till now: ";
 							print_queue(u.path);
-						//}	
+						}	
 						//cout<<"level"<<u.level<<"\n";
 					}
 				}
 			}
 		}
 	}
+	for(int s=0; s<u.path.size(); s++)
+	{
+		cout<<" "<<optTour[s];
+	}
+	cout<<"\n";
 
 }
 
@@ -181,4 +198,27 @@ int calMatrix(Node u)
 	res = calBound(u);
 	
 	return res;
+}
+
+int pathLength(Node u)
+{
+	int len=0;
+	for(int i=0; i<u.path.size()-1; i++)
+	{
+		cout<<"i: "<<i<<"\tsrc: "<<u.path[i]<<"\tdst: "<<u.path[i+1]<<"\tlen: "<<inputMatrix[u.path[i]-1][u.path[i+1]-1]<<"\n";
+		//cout<<"----"<<i<<" : "<<u.path[i];
+		len+=inputMatrix[u.path[i]-1][u.path[i+1]-1];
+	}
+	return len;
+}
+
+int findMissing(Node u)
+{
+	sort(u.path.begin(), u.path.end());
+	for(int i=0; i<=u.path.size(); i++)
+	{
+		if(u.path[i]!=i+1)
+			return i+1;
+	}
+	return 0;
 }
