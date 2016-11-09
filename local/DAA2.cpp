@@ -14,43 +14,47 @@ bool operator<(const Node& a, const Node& b)
 }
 
 vector<vector<int> > inputMatrix;
-int n;
-
+int n = 0;
+int ct = 1;
 int main()
 {
 	ifstream infile("input.txt");
 	int row, column, value;
 	string strIp;
-	infile>>strIp;
-	n = atoi(strIp.c_str());
-	inputMatrix.resize(n);
-	for(int l=0; l<n; l++)
+	if (infile.is_open())
 	{
-		inputMatrix[l].resize(n);
-	}
-	
-	while(infile)
-	{
-		for(int i=0; i<n; i++)
+		while(true)
 		{
+			if(infile.eof()) break;
 			infile>>strIp;
-			row = atoi(strIp.c_str());
-			infile>>strIp;
-			column = atoi(strIp.c_str());
-			infile>>strIp;
-			value = atoi(strIp.c_str());
-			inputMatrix[row][column] = value;
+			n = atoi(strIp.c_str());
+			if(n==0) break;
+			inputMatrix.resize(n);
+			for(int l=0; l<n; l++)
+			{
+				inputMatrix[l].resize(n);
+			}
+			for(int i=0; i<n*n; i++)
+			{
+				infile>>strIp;
+				row = atoi(strIp.c_str());
+				infile>>strIp;
+				column = atoi(strIp.c_str());
+				infile>>strIp;
+				value = atoi(strIp.c_str());
+				inputMatrix[row][column] = value;
+			}
+			int optTour[n+1];
+			travel(inputMatrix, optTour, ct);
+			ct++;	
 		}
+		infile.close();
 	}
-		
-	int optTour[n+1];
-	
-	travel(inputMatrix, optTour);
 	
 	return 0;
 }
 
-void travel(vector<vector<int> > inputMatrix, int optTour[])
+void travel(vector<vector<int> > inputMatrix, int optTour[], int ct)
 {
 	clock_t start_s = clock();
 
@@ -144,7 +148,7 @@ void travel(vector<vector<int> > inputMatrix, int optTour[])
 	}
 	clock_t stop_s = clock();
 	
-	cout<<"1 "<<n<<" "<<minLength<<" "<<counter<<" "<<(stop_s-start_s)*1000/double(CLOCKS_PER_SEC)<<endl;
+	cout<<ct<<" "<<n<<" "<<minLength<<" "<<counter<<" "<<(stop_s-start_s)*1000/double(CLOCKS_PER_SEC)<<endl;
 	if(n<=14)
 	{
 		for(int s=0; s<u.path.size()-1; s++)
