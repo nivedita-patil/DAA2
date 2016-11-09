@@ -14,13 +14,13 @@ bool operator<(const Node& a, const Node& b)
 }
 
 vector<vector<int> > inputMatrix;
+int n;
 
 int main()
 {
 	ifstream infile("input.txt");
-	
+	int row, column, value;
 	string strIp;
-	int n;
 	infile>>strIp;
 	n = atoi(strIp.c_str());
 	inputMatrix.resize(n);
@@ -28,7 +28,7 @@ int main()
 	{
 		inputMatrix[l].resize(n);
 	}
-	int row, column, value;
+	
 	while(infile)
 	{
 		for(int i=0; i<n; i++)
@@ -43,14 +43,14 @@ int main()
 		}
 	}
 		
-	int optTour[6];
+	int optTour[n+1];
 	
-	travel(n, inputMatrix, optTour);
+	travel(inputMatrix, optTour);
 	
 	return 0;
 }
 
-void travel(int n, vector<vector<int> > inputMatrix, int optTour[6])
+void travel(vector<vector<int> > inputMatrix, int optTour[])
 {
 	clock_t start_s = clock();
 
@@ -61,6 +61,8 @@ void travel(int n, vector<vector<int> > inputMatrix, int optTour[6])
 	v.level = 0;
 	v.path.push_front(-1);
 	v.path.push_front(1);
+	v.src.resize(n);
+	v.dst.resize(n);
 	v.src[0]=1;
 	v.boundMatrix = vector<vector<int> >(inputMatrix);
 
@@ -73,7 +75,7 @@ void travel(int n, vector<vector<int> > inputMatrix, int optTour[6])
 		}
 	}
 
-	v.bound = calBound(v, n);	
+	v.bound = calBound(v);	
 	int minLength = 9999;	
 	q.push(v);
 	counter++;
@@ -85,22 +87,19 @@ void travel(int n, vector<vector<int> > inputMatrix, int optTour[6])
 		deque<int>::iterator it;
 		v = q.top();
 		q.pop();	
-
 		if (v.bound < minLength)
 		{
 			u.level = v.level + 1;
-
 			if (u.level == n-1)
 			{
 				u.path = v.path;
 				u.path.pop_back();
 				u.path.push_front(findMissing(u));
 				u.path.push_front(1);
-
+				reverse(u.path.begin(),u.path.end());
 				if (pathLength(u)<minLength)
 				{
 					minLength = pathLength(u);
-					
 					for(int w=0; w<u.path.size(); w++)
 					{
 						optTour[w]=u.path[w];
@@ -118,8 +117,8 @@ void travel(int n, vector<vector<int> > inputMatrix, int optTour[6])
 						
 						u.path = v.path;
 						
-						copy(&v.src[0], &v.src[n], &u.src[0]);
-						copy(&v.dst[0], &v.dst[n],&u.dst[0]);
+						u.src = vector<int>(v.src);
+						u.dst = vector<int>(v.dst);
 						
 						hold = u.path.front();
 						u.path.push_front(g);
@@ -131,7 +130,7 @@ void travel(int n, vector<vector<int> > inputMatrix, int optTour[6])
 
 						u.boundMatrix = vector<vector<int> >(v.boundMatrix);
 						
-						u.bound = calMatrix(u, n);	
+						u.bound = calMatrix(u);	
 						
 						if(u.bound < minLength)
 						{
@@ -145,19 +144,17 @@ void travel(int n, vector<vector<int> > inputMatrix, int optTour[6])
 	}
 	clock_t stop_s = clock();
 	
-	
-	
 	cout<<"1 "<<n<<" "<<minLength<<" "<<counter<<" "<<(stop_s-start_s)*1000/double(CLOCKS_PER_SEC)<<endl;
 	if(n<=14)
 	{
-		for(int s=u.path.size()-1; s>0; s--)
+		for(int s=0; s<u.path.size()-1; s++)
 		{
 			cout<<optTour[s]<<endl;
 		}
 	}
 }
 
-int calBound(Node v, int n)
+int calBound(Node v)
 {
 	int min;
 	int sum=0;
@@ -184,8 +181,8 @@ int calBound(Node v, int n)
 	return sum;
 }
 
-int calMatrix(Node u, int n)
-{					
+int calMatrix(Node u)
+{
 	int res;
 
 	for(int i=0; i<n; i++)
@@ -202,7 +199,7 @@ int calMatrix(Node u, int n)
 				}
 		}
 	}
-	res = calBound(u, n);
+	res = calBound(u);
 	
 	return res;
 }

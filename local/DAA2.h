@@ -3,7 +3,7 @@
 #include<vector>
 using namespace std;
 //void travel(int n, int inputMatrix[5][5], int optTour[6]);
-void travel(int n, vector<vector<int> > inputMatrix, int optTour[6]);
+void travel(vector<vector<int> > inputMatrix, int optTour[]);
 class Node
 {
 public: 	
@@ -12,14 +12,16 @@ public:
 	int bound;
 	vector<vector<int> > boundMatrix;
 	//int boundMatrix[5][5];
-	int src[5]={0};
-	int dst[5]={0};
+	vector<int> src;
+	vector<int> dst;
+//	int src[5]={0};
+//	int dst[5]={0};
 	int pathCost=0;
 };
 
-int calBound(Node v, int n);
+int calBound(Node v);
 
-int calMatrix(Node u, int n);
+int calMatrix(Node u);
 
 int pathLength(Node u);
 
